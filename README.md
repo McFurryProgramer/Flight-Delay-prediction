@@ -4,11 +4,6 @@
 Обучаются модели: Logistic Regression (baseline) и Random Forest Classifier
 Используемые технологии: Python, Pandas, NumPy, Matplotlib, Scikit-learn
 
-Результаты
-Модель	Accuracy	Precision	Recall	F1-score	ROC-AUC
-Logistic Regression	~0.64	~0.59	~0.58	~0.59	~0.69
-Random Forest	~0.64	~0.61	~0.54	~0.58	~0.70
-
 Модель Random Forest показала немного более высокое значение ROC-AUC, в то время как логистическая регрессия демонстрирует более интерпретируемое и стабильное поведение. Оба подхода позволяют выявить ключевые факторы, влияющие на задержки рейсов.
 
 Датасет: https://www.kaggle.com/datasets/ulrikthygepedersen/airlines-delay
