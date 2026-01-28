@@ -20,15 +20,9 @@ from sklearn.metrics import (
     ConfusionMatrixDisplay
 )
 
-# =======================
-# Загрузка данных
-# =======================
 df = pd.read_csv("airlines_delay.csv")
 print(df.head())
 
-# =======================
-# Первичный анализ данных
-# =======================
 df["Class"].value_counts().plot(kind="bar")
 plt.xlabel("Класс")
 plt.ylabel("Количество рейсов")
@@ -53,9 +47,6 @@ plt.show()
 df.info()
 print(df.isnull().sum())
 
-# =======================
-# Подготовка данных
-# =======================
 X = df.drop(columns=["Class"])
 y = df["Class"]
 
@@ -76,15 +67,12 @@ X_train, X_test, y_train, y_test = train_test_split(
     stratify=y
 )
 
-# =======================
-# Логистическая регрессия
-# =======================
+#Логитическая регрессия
 logreg_model = Pipeline(steps=[
     ("preprocessor", preprocessor),
     ("classifier", LogisticRegression(
         max_iter=1000,
         class_weight="balanced",
-        n_jobs=-1
     ))
 ])
 
@@ -100,7 +88,6 @@ print("Recall:", recall_score(y_test, y_pred_lr))
 print("F1-score:", f1_score(y_test, y_pred_lr))
 print("ROC-AUC:", roc_auc_score(y_test, y_proba_lr))
 
-# Матрица ошибок — логистическая регрессия
 cm_lr = confusion_matrix(y_test, y_pred_lr)
 disp_lr = ConfusionMatrixDisplay(
     confusion_matrix=cm_lr,
@@ -110,9 +97,7 @@ disp_lr.plot(cmap="Blues")
 plt.title("Матрица ошибок: Logistic Regression")
 plt.show()
 
-# =======================
 # Случайный лес
-# =======================
 rf_model = Pipeline(steps=[
     ("preprocessor", preprocessor),
     ("classifier", RandomForestClassifier(
@@ -136,7 +121,6 @@ print("Recall:", recall_score(y_test, y_pred_rf))
 print("F1-score:", f1_score(y_test, y_pred_rf))
 print("ROC-AUC:", roc_auc_score(y_test, y_proba_rf))
 
-# Матрица ошибок — случайный лес
 cm_rf = confusion_matrix(y_test, y_pred_rf)
 disp_rf = ConfusionMatrixDisplay(
     confusion_matrix=cm_rf,
@@ -146,9 +130,6 @@ disp_rf.plot(cmap="Greens")
 plt.title("Матрица ошибок: Random Forest")
 plt.show()
 
-# =======================
-# Сравнительная таблица
-# =======================
 results = pd.DataFrame({
     "Model": ["Logistic Regression", "Random Forest"],
     "Accuracy": [
@@ -175,9 +156,6 @@ results = pd.DataFrame({
 
 print(results)
 
-# =======================
-# ROC-кривые
-# =======================
 fpr_lr, tpr_lr, _ = roc_curve(y_test, y_proba_lr)
 fpr_rf, tpr_rf, _ = roc_curve(y_test, y_proba_rf)
 
@@ -191,9 +169,6 @@ plt.title("ROC-кривые моделей")
 plt.legend()
 plt.show()
 
-# =======================
-# Feature importance (Random Forest)
-# =======================
 ohe = rf_model.named_steps["preprocessor"].named_transformers_["cat"]
 cat_feature_names = ohe.get_feature_names_out(categorical_features)
 feature_names = np.concatenate([cat_feature_names, numerical_features])
@@ -204,13 +179,12 @@ feature_importance_df = pd.DataFrame({
     "Importance": importances
 }).sort_values(by="Importance", ascending=False)
 
-# Топ-20 признаков
 plt.figure(figsize=(8, 6))
 plt.barh(
-    feature_importance_df["Feature"].head(20)[::-1],
-    feature_importance_df["Importance"].head(20)[::-1]
+    feature_importance_df["Feature"].head(10)[::-1],
+    feature_importance_df["Importance"].head(10)[::-1]
 )
 plt.xlabel("Важность признака")
-plt.title("Топ-20 наиболее значимых признаков (Random Forest)")
+plt.title("Топ-10 наиболее значимых признаков (Random Forest)")
 plt.tight_layout()
 plt.show()
